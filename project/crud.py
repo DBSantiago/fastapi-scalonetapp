@@ -1,7 +1,9 @@
 from sqlalchemy.orm import Session
 
-from project.models import Rol, Equipo, Seleccion, Integrante
-from project.schemas import RolBaseModel, EquipoBaseModel, SeleccionBaseModel, IntegranteBaseModel
+from project.models import Rol, Equipo, Seleccion, Integrante, Usuario
+from project.schemas import RolBaseModel, EquipoBaseModel, SeleccionBaseModel, IntegranteBaseModel, UsuarioBaseModel
+
+from project.utils import hash_password
 
 
 # ================================
@@ -381,3 +383,97 @@ def delete_integrante(db: Session, integrante_id: int):
     db.commit()
 
     return {"OK": f"Integrante con id: {integrante_id} eliminado exitosamente"}
+
+
+# ================================
+#           USUARIO
+# ================================
+def get_usuario(db: Session, usuario_id: int):
+    """ Get an Usuario object from our database given an id :usuario_id:
+
+    Args:
+        db (Session): The database Session.
+        usuario_id (int): The Usuario id.
+
+    Returns:
+        Usuario object if found, None otherwise.
+    """
+    return db.query(Usuario).filter(Usuario.id == usuario_id).first()
+
+
+def get_usuarios(db: Session):
+    """ Get all Usuario objects from our database
+
+    Args:
+        db (Session): The database Session.
+
+    Returns:
+        Usuario objects list if found, empty list otherwise.
+    """
+    return db.query(Usuario).all()
+
+
+def create_usuario(db: Session, usuario: UsuarioBaseModel):
+    """ Create an Usuario in our database given the values in the :usuario: param.
+
+            Args:
+                db (Session): The database Session.
+                usuario (UsuarioBaseModel): The UsuarioBaseModel to create an Usuario in our database.
+
+            Returns:
+                Created Usuario object.
+            """
+    db_usuario = Usuario(email=usuario.email,
+                         password=hash_password(usuario.password))
+    db.add(db_usuario)
+    db.commit()
+    db.refresh(db_usuario)
+
+    return db_usuario
+
+
+def update_usuario(db: Session, usuario: UsuarioBaseModel, usuario_id: int):
+    """ Update an Usuario in our database given the values in the :usuario: param.
+
+    Args:
+        db (Session): The database Session.
+        usuario (UsuarioBaseModel): The UsuarioBaseModel to update an Usuario in our database.
+        usuario_id (int): The Usuario id passed as url param.
+
+    Returns:
+        Updated Usuario object if found, None otherwise.
+    """
+    db_usuario = db.get(Usuario, usuario_id)
+
+    if db_usuario is None:
+        return db_usuario
+
+    db_usuario.email = usuario.email
+    db_usuario.password = hash_password(usuario.password)
+
+    db.add(db_usuario)
+    db.commit()
+    db.refresh(db_usuario)
+
+    return db_usuario
+
+
+def delete_usuario(db: Session, usuario_id: int):
+    """ Delete an Usuario in our database given an id :usuario_id:
+
+        Args:
+            db (Session): The database Session.
+            usuario_id (int): The Usuario id.
+
+        Returns:
+            Message if Usuario is found, None otherwise.
+        """
+    db_usuario = db.get(Usuario, usuario_id)
+
+    if db_usuario is None:
+        return db_usuario
+
+    db.delete(db_usuario)
+    db.commit()
+
+    return {"OK": f"Usuario con id: {usuario_id} eliminado exitosamente"}

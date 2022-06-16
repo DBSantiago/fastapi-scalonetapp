@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, text, Boolean
+from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -48,3 +49,15 @@ class Integrante(Base):
     seleccion = relationship("Seleccion", backref="integrantes")
     equipo = relationship("Equipo", backref="integrantes")
     rol = relationship("Rol", backref="integrantes")
+
+
+# ================================
+#           USUARIO
+# ================================
+class Usuario(Base):
+    __tablename__ = "usuarios"
+    id: int = Column(Integer, primary_key=True, nullable=False)
+    email: str = Column(String, nullable=False, unique=True)
+    password: str = Column(String, nullable=False)
+    is_admin: bool = Column(Boolean, default=False)
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))

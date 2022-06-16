@@ -1,6 +1,7 @@
+from datetime import datetime
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from pydantic import validator
 
 
@@ -89,3 +90,16 @@ class IntegrantesXSeleccionResponseModel(ResponseModel):
 class IntegrantesXEquipoResponseModel(ResponseModel):
     equipo: EquipoResponseModel
     integrantes: List[IntegranteXEquipoModel]
+
+
+# ================================
+#           USUARIO
+# ================================
+class UsuarioBaseModel(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class UsuarioResponseModel(ResponseModel):
+    id: int
+    email: str
