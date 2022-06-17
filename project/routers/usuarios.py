@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from project.database import get_db
 from project import crud
+from project.oauth2 import get_current_usuario
 from project.schemas import UsuarioResponseModel, UsuarioBaseModel
 
 router = APIRouter(prefix="/usuarios", tags=["usuarios"])
@@ -36,7 +37,8 @@ async def create_usuario(usuario: UsuarioBaseModel, db: Session = Depends(get_db
 
 
 @router.put("/{usuario_id}", response_model=UsuarioResponseModel)
-async def update_usuario(usuario_id: int, usuario: UsuarioBaseModel, db: Session = Depends(get_db)):
+async def update_usuario(usuario_id: int, usuario: UsuarioBaseModel, db: Session = Depends(get_db),
+                         usuario_id_oauth: int = Depends(get_current_usuario)):
     updated_usuario = crud.update_usuario(db, usuario, usuario_id)
 
     if updated_usuario is None:
@@ -46,7 +48,8 @@ async def update_usuario(usuario_id: int, usuario: UsuarioBaseModel, db: Session
 
 
 @router.delete("/{usuario_id}")
-async def delete_usuario(usuario_id: int, db: Session = Depends(get_db)):
+async def delete_usuario(usuario_id: int, db: Session = Depends(get_db),
+                         usuario_id_oauth: int = Depends(get_current_usuario)):
     deleted_usuario = crud.delete_usuario(db, usuario_id)
 
     if deleted_usuario is None:

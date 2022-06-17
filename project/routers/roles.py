@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from project.database import get_db
 from project import crud
+from project.oauth2 import get_current_usuario
 from project.schemas import RolResponseModel, RolBaseModel
 
 router = APIRouter(prefix="/roles")
@@ -28,14 +29,15 @@ async def get_rol(rol_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=RolResponseModel, tags=["roles"])
-async def create_rol(rol: RolBaseModel, db: Session = Depends(get_db)):
+async def create_rol(rol: RolBaseModel, db: Session = Depends(get_db), usuario_id: int = Depends(get_current_usuario)):
     new_rol = crud.create_rol(db, rol)
 
     return new_rol
 
 
 @router.put("/{rol_id}", response_model=RolResponseModel, tags=["roles"])
-async def update_rol(rol: RolBaseModel, rol_id: int, db: Session = Depends(get_db)):
+async def update_rol(rol: RolBaseModel, rol_id: int, db: Session = Depends(get_db),
+                     usuario_id: int = Depends(get_current_usuario)):
     new_rol = crud.update_rol(db, rol, rol_id)
 
     if new_rol is None:
@@ -45,7 +47,7 @@ async def update_rol(rol: RolBaseModel, rol_id: int, db: Session = Depends(get_d
 
 
 @router.delete("/{rol_id}", response_model=RolResponseModel, tags=["roles"])
-async def delete_rol(rol_id: int, db: Session = Depends(get_db)):
+async def delete_rol(rol_id: int, db: Session = Depends(get_db), usuario_id: int = Depends(get_current_usuario)):
     deleted_rol = crud.delete_rol(db, rol_id)
 
     if deleted_rol is None:

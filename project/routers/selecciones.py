@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from project import crud
 from project.database import get_db
+from project.oauth2 import get_current_usuario
 from project.schemas import SeleccionResponseModel, SeleccionBaseModel
 
 router = APIRouter(prefix="/selecciones")
@@ -28,14 +29,16 @@ async def get_seleccion(seleccion_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=SeleccionResponseModel, tags=["selecciones"])
-async def create_seleccion(seleccion: SeleccionBaseModel, db: Session = Depends(get_db)):
+async def create_seleccion(seleccion: SeleccionBaseModel, db: Session = Depends(get_db),
+                           usuario_id: int = Depends(get_current_usuario)):
     new_seleccion = crud.create_seleccion(db, seleccion)
 
     return new_seleccion
 
 
 @router.put("/{seleccion_id}", response_model=SeleccionResponseModel, tags=["selecciones"])
-async def update_seleccion(seleccion: SeleccionBaseModel, seleccion_id: int, db: Session = Depends(get_db)):
+async def update_seleccion(seleccion: SeleccionBaseModel, seleccion_id: int, db: Session = Depends(get_db),
+                           usuario_id: int = Depends(get_current_usuario)):
     updated_seleccion = crud.update_seleccion(db, seleccion, seleccion_id)
 
     if updated_seleccion is None:
@@ -45,7 +48,8 @@ async def update_seleccion(seleccion: SeleccionBaseModel, seleccion_id: int, db:
 
 
 @router.delete("/{seleccion_id}", response_model=SeleccionResponseModel, tags=["selecciones"])
-async def delete_seleccion(seleccion_id: int, db: Session = Depends(get_db)):
+async def delete_seleccion(seleccion_id: int, db: Session = Depends(get_db),
+                           usuario_id: int = Depends(get_current_usuario)):
     deleted_seleccion = crud.delete_seleccion(db, seleccion_id)
 
     if deleted_seleccion is None:
