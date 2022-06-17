@@ -103,3 +103,8 @@ class UsuarioBaseModel(BaseModel):
 class UsuarioResponseModel(ResponseModel):
     id: int
     email: str
+
+
+class UsuarioLogin(BaseModel):
+    email: EmailStr
+    password: str

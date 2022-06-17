@@ -7,6 +7,7 @@ from .routers import router_equipos
 from .routers import router_selecciones
 from .routers import router_integrantes
 from .routers import router_usuarios
+from .routers import router_authentication
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -22,6 +23,7 @@ api_v1.include_router(router_equipos)
 api_v1.include_router(router_selecciones)
 api_v1.include_router(router_integrantes)
 api_v1.include_router(router_usuarios)
+api_v1.include_router(router_authentication)
 
 app.include_router(api_v1)
 

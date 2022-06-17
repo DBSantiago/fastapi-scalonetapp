@@ -477,3 +477,10 @@ def delete_usuario(db: Session, usuario_id: int):
     db.commit()
 
     return {"OK": f"Usuario con id: {usuario_id} eliminado exitosamente"}
+
+
+def get_usuario_by_email(db: Session, usuario: UsuarioBaseModel):
+
+    db_usuario = db.query(Usuario).filter(Usuario.email == usuario.email).first()
+
+    return db_usuario
