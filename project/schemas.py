@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel, EmailStr
 from pydantic import validator
@@ -105,6 +105,11 @@ class UsuarioResponseModel(ResponseModel):
     email: str
 
 
-class UsuarioLogin(BaseModel):
-    email: EmailStr
-    password: str
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    id: Optional[str] = None
+
