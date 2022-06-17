@@ -1,3 +1,4 @@
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from project.models import Rol, Equipo, Seleccion, Integrante, Usuario
@@ -479,8 +480,8 @@ def delete_usuario(db: Session, usuario_id: int):
     return {"OK": f"Usuario con id: {usuario_id} eliminado exitosamente"}
 
 
-def get_usuario_by_email(db: Session, usuario: UsuarioBaseModel):
+def get_usuario_by_email(db: Session, usuario: OAuth2PasswordRequestForm):
 
-    db_usuario = db.query(Usuario).filter(Usuario.email == usuario.email).first()
+    db_usuario = db.query(Usuario).filter(Usuario.email == usuario.username).first()
 
     return db_usuario
