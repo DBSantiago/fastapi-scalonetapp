@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from project import crud
@@ -31,6 +31,12 @@ async def get_integrante(integrante_id: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=IntegranteResponseModel, tags=["integrantes"])
 async def create_integrante(integrante: IntegranteBaseModel, db: Session = Depends(get_db),
                             usuario_id: int = Depends(get_current_usuario)):
+    usuario = crud.get_usuario(db, usuario_id)
+
+    if usuario.is_admin is False:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Solo usuarios administradores pueden agregar integrantes.")
+
     new_integrante = crud.create_integrante(db, integrante)
 
     return new_integrante
@@ -39,6 +45,12 @@ async def create_integrante(integrante: IntegranteBaseModel, db: Session = Depen
 @router.put("/{integrante_id}", response_model=IntegranteResponseModel, tags=["integrantes"])
 async def update_integrante(integrante: IntegranteBaseModel, integrante_id: int, db: Session = Depends(get_db),
                             usuario_id: int = Depends(get_current_usuario)):
+    usuario = crud.get_usuario(db, usuario_id)
+
+    if usuario.is_admin is False:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Solo usuarios administradores pueden modificar integrantes.")
+
     updated_integrante = crud.update_integrante(db, integrante, integrante_id)
 
     if updated_integrante is None:
@@ -50,6 +62,12 @@ async def update_integrante(integrante: IntegranteBaseModel, integrante_id: int,
 @router.delete("/{integrante_id}", tags=["integrantes"])
 async def delete_integrante(integrante_id: int, db: Session = Depends(get_db),
                             usuario_id: int = Depends(get_current_usuario)):
+    usuario = crud.get_usuario(db, usuario_id)
+
+    if usuario.is_admin is False:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Solo usuarios administradores pueden eliminar integrantes.")
+
     deleted_integrante = crud.delete_integrante(db, integrante_id)
 
     if deleted_integrante is None:
