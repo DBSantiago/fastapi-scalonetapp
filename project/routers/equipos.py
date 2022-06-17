@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from project import crud
@@ -31,6 +31,12 @@ async def get_equipo(equipo_id: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=EquipoResponseModel, tags=["equipos"])
 async def create_equipo(equipo: EquipoBaseModel, db: Session = Depends(get_db),
                         usuario_id: int = Depends(get_current_usuario)):
+    usuario = crud.get_usuario(db, usuario_id)
+
+    if usuario.is_admin is False:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Solo usuarios administradores pueden crear equipos.")
+
     new_equipo = crud.create_equipo(db, equipo)
 
     if new_equipo is None:
@@ -42,6 +48,12 @@ async def create_equipo(equipo: EquipoBaseModel, db: Session = Depends(get_db),
 @router.put("/{equipo_id}", response_model=EquipoResponseModel, tags=["equipos"])
 async def update_equipo(equipo: EquipoBaseModel, equipo_id: int, db: Session = Depends(get_db),
                         usuario_id: int = Depends(get_current_usuario)):
+    usuario = crud.get_usuario(db, usuario_id)
+
+    if usuario.is_admin is False:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Solo usuarios administradores pueden modificar equipos.")
+
     new_equipo = crud.update_equipo(db, equipo, equipo_id)
 
     if new_equipo is None:
@@ -52,6 +64,12 @@ async def update_equipo(equipo: EquipoBaseModel, equipo_id: int, db: Session = D
 
 @router.delete("/{equipo_id}", response_model=EquipoResponseModel, tags=["equipos"])
 async def delete_equipo(equipo_id: int, db: Session = Depends(get_db), usuario_id: int = Depends(get_current_usuario)):
+    usuario = crud.get_usuario(db, usuario_id)
+
+    if usuario.is_admin is False:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Solo usuarios administradores pueden eliminar equipos.")
+
     deleted_equipo = crud.delete_equipo(db, equipo_id)
 
     if deleted_equipo is None:

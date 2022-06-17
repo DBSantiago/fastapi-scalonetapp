@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from project import crud
@@ -31,6 +31,12 @@ async def get_seleccion(seleccion_id: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=SeleccionResponseModel, tags=["selecciones"])
 async def create_seleccion(seleccion: SeleccionBaseModel, db: Session = Depends(get_db),
                            usuario_id: int = Depends(get_current_usuario)):
+    usuario = crud.get_usuario(db, usuario_id)
+
+    if usuario.is_admin is False:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Solo usuarios administradores pueden agregar selecciones.")
+
     new_seleccion = crud.create_seleccion(db, seleccion)
 
     return new_seleccion
@@ -39,6 +45,12 @@ async def create_seleccion(seleccion: SeleccionBaseModel, db: Session = Depends(
 @router.put("/{seleccion_id}", response_model=SeleccionResponseModel, tags=["selecciones"])
 async def update_seleccion(seleccion: SeleccionBaseModel, seleccion_id: int, db: Session = Depends(get_db),
                            usuario_id: int = Depends(get_current_usuario)):
+    usuario = crud.get_usuario(db, usuario_id)
+
+    if usuario.is_admin is False:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Solo usuarios administradores pueden modificar selecciones.")
+
     updated_seleccion = crud.update_seleccion(db, seleccion, seleccion_id)
 
     if updated_seleccion is None:
@@ -50,6 +62,12 @@ async def update_seleccion(seleccion: SeleccionBaseModel, seleccion_id: int, db:
 @router.delete("/{seleccion_id}", response_model=SeleccionResponseModel, tags=["selecciones"])
 async def delete_seleccion(seleccion_id: int, db: Session = Depends(get_db),
                            usuario_id: int = Depends(get_current_usuario)):
+    usuario = crud.get_usuario(db, usuario_id)
+
+    if usuario.is_admin is False:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Solo usuarios administradores pueden eliminar selecciones.")
+
     deleted_seleccion = crud.delete_seleccion(db, seleccion_id)
 
     if deleted_seleccion is None:
