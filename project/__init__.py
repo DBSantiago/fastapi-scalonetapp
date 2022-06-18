@@ -1,4 +1,5 @@
 from fastapi import FastAPI, APIRouter
+from fastapi.middleware.cors import CORSMiddleware
 
 from .database import SessionLocal, engine
 from . import models
@@ -16,6 +17,16 @@ app = FastAPI(
     description="API para el proyecto La ScalonetApp. Nos permite realizar operaciones CRUD sobre selecciones y sus "
                 "integrantes.",
     version="1")
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 api_v1 = APIRouter(prefix="/api/v1")
 api_v1.include_router(router_roles)
