@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from project.database import get_db
 from project import crud
 from project.oauth2 import get_current_usuario
-from project.schemas import RolResponseModel, RolBaseModel
+from project.schemas import RolResponseModel, RolBaseModel, TokenData
 
 router = APIRouter(prefix="/roles")
 
@@ -29,8 +29,9 @@ async def get_rol(rol_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=RolResponseModel, tags=["roles"])
-async def create_rol(rol: RolBaseModel, db: Session = Depends(get_db), usuario_id: int = Depends(get_current_usuario)):
-    usuario = crud.get_usuario(db, usuario_id)
+async def create_rol(rol: RolBaseModel, db: Session = Depends(get_db),
+                     token_data: TokenData = Depends(get_current_usuario)):
+    usuario = crud.get_usuario(db, token_data.id)
 
     if usuario.is_admin is False:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
@@ -43,8 +44,8 @@ async def create_rol(rol: RolBaseModel, db: Session = Depends(get_db), usuario_i
 
 @router.put("/{rol_id}", response_model=RolResponseModel, tags=["roles"])
 async def update_rol(rol: RolBaseModel, rol_id: int, db: Session = Depends(get_db),
-                     usuario_id: int = Depends(get_current_usuario)):
-    usuario = crud.get_usuario(db, usuario_id)
+                     token_data: TokenData = Depends(get_current_usuario)):
+    usuario = crud.get_usuario(db, token_data.id)
 
     if usuario.is_admin is False:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
@@ -59,8 +60,8 @@ async def update_rol(rol: RolBaseModel, rol_id: int, db: Session = Depends(get_d
 
 
 @router.delete("/{rol_id}", response_model=RolResponseModel, tags=["roles"])
-async def delete_rol(rol_id: int, db: Session = Depends(get_db), usuario_id: int = Depends(get_current_usuario)):
-    usuario = crud.get_usuario(db, usuario_id)
+async def delete_rol(rol_id: int, db: Session = Depends(get_db), token_data: TokenData = Depends(get_current_usuario)):
+    usuario = crud.get_usuario(db, token_data.id)
 
     if usuario.is_admin is False:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
