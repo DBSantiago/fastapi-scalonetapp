@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:postgresql://localhost:5432/db_scalonetapp</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="test_scalonetapp@localhost" uuid="b9545324-46b0-45d0-a378-5aac60eec523">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/test_scalonetapp</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
