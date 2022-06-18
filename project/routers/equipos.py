@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from project import crud
 from project.database import get_db
+from project.models import Usuario
 from project.oauth2 import get_current_usuario
 from project.schemas import EquipoResponseModel, EquipoBaseModel, TokenData
 
@@ -30,10 +31,8 @@ async def get_equipo(equipo_id: int, db: Session = Depends(get_db)):
 
 @router.post("/", response_model=EquipoResponseModel, tags=["equipos"])
 async def create_equipo(equipo: EquipoBaseModel, db: Session = Depends(get_db),
-                        token_data: TokenData = Depends(get_current_usuario)):
-    usuario = crud.get_usuario(db, token_data.id)
-
-    if usuario.is_admin is False:
+                        current_usuario: Usuario = Depends(get_current_usuario)):
+    if current_usuario.is_admin is False:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="Solo usuarios administradores pueden crear equipos.")
 
@@ -47,10 +46,8 @@ async def create_equipo(equipo: EquipoBaseModel, db: Session = Depends(get_db),
 
 @router.put("/{equipo_id}", response_model=EquipoResponseModel, tags=["equipos"])
 async def update_equipo(equipo: EquipoBaseModel, equipo_id: int, db: Session = Depends(get_db),
-                        token_data: TokenData = Depends(get_current_usuario)):
-    usuario = crud.get_usuario(db, token_data.id)
-
-    if usuario.is_admin is False:
+                        current_usuario: Usuario = Depends(get_current_usuario)):
+    if current_usuario.is_admin is False:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="Solo usuarios administradores pueden modificar equipos.")
 
@@ -63,10 +60,9 @@ async def update_equipo(equipo: EquipoBaseModel, equipo_id: int, db: Session = D
 
 
 @router.delete("/{equipo_id}", response_model=EquipoResponseModel, tags=["equipos"])
-async def delete_equipo(equipo_id: int, db: Session = Depends(get_db), token_data: TokenData = Depends(get_current_usuario)):
-    usuario = crud.get_usuario(db, token_data.id)
-
-    if usuario.is_admin is False:
+async def delete_equipo(equipo_id: int, db: Session = Depends(get_db),
+                        current_usuario: Usuario = Depends(get_current_usuario)):
+    if current_usuario.is_admin is False:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="Solo usuarios administradores pueden eliminar equipos.")
 

@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from project import crud
 from project.database import get_db
+from project.models import Usuario
 from project.oauth2 import get_current_usuario
 from project.schemas import SeleccionResponseModel, SeleccionBaseModel, TokenData
 
@@ -30,10 +31,8 @@ async def get_seleccion(seleccion_id: int, db: Session = Depends(get_db)):
 
 @router.post("/", response_model=SeleccionResponseModel, tags=["selecciones"])
 async def create_seleccion(seleccion: SeleccionBaseModel, db: Session = Depends(get_db),
-                           token_data: TokenData = Depends(get_current_usuario)):
-    usuario = crud.get_usuario(db, token_data.id)
-
-    if usuario.is_admin is False:
+                           current_usuario: Usuario = Depends(get_current_usuario)):
+    if current_usuario.is_admin is False:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="Solo usuarios administradores pueden agregar selecciones.")
 
@@ -44,10 +43,8 @@ async def create_seleccion(seleccion: SeleccionBaseModel, db: Session = Depends(
 
 @router.put("/{seleccion_id}", response_model=SeleccionResponseModel, tags=["selecciones"])
 async def update_seleccion(seleccion: SeleccionBaseModel, seleccion_id: int, db: Session = Depends(get_db),
-                           token_data: TokenData = Depends(get_current_usuario)):
-    usuario = crud.get_usuario(db, token_data.id)
-
-    if usuario.is_admin is False:
+                           current_usuario: Usuario = Depends(get_current_usuario)):
+    if current_usuario.is_admin is False:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="Solo usuarios administradores pueden modificar selecciones.")
 
@@ -61,10 +58,8 @@ async def update_seleccion(seleccion: SeleccionBaseModel, seleccion_id: int, db:
 
 @router.delete("/{seleccion_id}", response_model=SeleccionResponseModel, tags=["selecciones"])
 async def delete_seleccion(seleccion_id: int, db: Session = Depends(get_db),
-                           token_data: TokenData = Depends(get_current_usuario)):
-    usuario = crud.get_usuario(db, token_data.id)
-
-    if usuario.is_admin is False:
+                           current_usuario: Usuario = Depends(get_current_usuario)):
+    if current_usuario.is_admin is False:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="Solo usuarios administradores pueden eliminar selecciones.")
 
