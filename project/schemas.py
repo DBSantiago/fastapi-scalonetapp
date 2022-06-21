@@ -28,6 +28,13 @@ class SeleccionResponseModel(ResponseModel):
 class EquipoBaseModel(BaseModel):
     nombre: str
 
+    @validator("nombre")
+    def validate_nombre_length(cls, nombre):
+        if len(nombre) <= 1:
+            raise ValueError("El nombre del equipo debe tener al menos 2 caracteres.")
+
+        return nombre
+
 
 class EquipoResponseModel(ResponseModel):
     id: int
@@ -112,4 +119,3 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[int] = None
-

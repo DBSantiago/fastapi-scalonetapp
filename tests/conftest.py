@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from project import app
 from project.database import get_db, Base
-from project.models import Usuario
+from project.models import Usuario, Equipo
 from project.oauth2 import SECRET_KEY, ALGORITHM
 from project.schemas import Token
 from project.utils import hash_password
@@ -117,3 +117,17 @@ def admin_login(client, admin_test):
     assert usuario_id == admin_test.get("id")
 
     return login_res
+
+
+@pytest.fixture
+def equipo_test(client, session):
+    new_equipo = Equipo(nombre="equipo_test")
+
+    session.add(new_equipo)
+    session.commit()
+    session.refresh(new_equipo)
+
+    return {
+        "id": new_equipo.id,
+        "nombre": new_equipo.nombre
+    }

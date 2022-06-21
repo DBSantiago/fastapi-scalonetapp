@@ -14,7 +14,7 @@ USUARIOS_URL = "/api/v1/usuarios"
 AUTH_URL = "/api/v1/auth/login"
 
 
-class TestUsuariosClass:
+class TestUsuarioClass:
 
     def test_create_usuario(self, client):
         response = client.post(f"{USUARIOS_URL}/", json={"email": "test2@email.com",
