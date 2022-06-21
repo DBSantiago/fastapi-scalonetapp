@@ -2,7 +2,6 @@ import pytest
 from decouple import config
 from jose import jwt
 
-from project.models import Usuario
 from project.oauth2 import SECRET_KEY, ALGORITHM
 
 from project.schemas import UsuarioResponseModel, Token
