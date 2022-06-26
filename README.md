@@ -1,4 +1,4 @@
-# API La ScalonetApp
+# API La ScalonetApp - Desplegada en [Heroku](https://api-scalonetapp.herokuapp.com/docs)
 
 API para la aplicación web La ScalonetApp. Desarrollada en Python con el framework FastAPI y utilizando una base de datos relacional PostgreSQL.
 
