@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from project import app
 from project.database import get_db, Base
-from project.models import Usuario, Equipo
+from project.models import Usuario, Equipo, Seleccion
 from project.oauth2 import SECRET_KEY, ALGORITHM
 from project.schemas import Token
 from project.utils import hash_password
@@ -130,4 +130,18 @@ def equipo_test(client, session):
     return {
         "id": new_equipo.id,
         "nombre": new_equipo.nombre
+    }
+
+
+@pytest.fixture
+def seleccion_test(client, session):
+    new_seleccion = Seleccion(pais="pais_test")
+
+    session.add(new_seleccion)
+    session.commit()
+    session.refresh(new_seleccion)
+
+    return {
+        "id": new_seleccion.id,
+        "pais": new_seleccion.pais
     }

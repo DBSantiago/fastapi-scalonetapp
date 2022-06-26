@@ -16,6 +16,13 @@ class ResponseModel(BaseModel):
 class SeleccionBaseModel(BaseModel):
     pais: str
 
+    @validator("pais")
+    def validate_pais_length(cls, pais):
+        if len(pais) <= 1:
+            raise ValueError("El nombre del pais debe tener al menos 2 caracteres.")
+
+        return pais
+
 
 class SeleccionResponseModel(ResponseModel):
     id: int

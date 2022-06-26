@@ -1,5 +1,5 @@
 import pytest
-from jose import jwt
+
 
 EQUIPOS_URL = "/api/v1/equipos"
 
