@@ -76,7 +76,7 @@ Representa a los integrantes de las selecciones.
 
 ## Usuarios
 
-Representa a los usuarios de nuestra aplicación.
+Representa a los usuarios de nuestra aplicación. La autenticación de los usuarios está implementada a través de Bearer Token con JWT con OAuth2
 
 * Atributos:
   * id (numero)
